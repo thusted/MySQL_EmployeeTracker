@@ -1,4 +1,4 @@
-const sql = require("mysql");
+const mysql = require("mysql");
 const inquirer = require("inquirer");
 
 // create the connection information for the sql database
@@ -28,10 +28,8 @@ const init = () => {
   ]).then((answers) => {
     if(answers.mainMenu === "Add a department") {
       addDepartment();
-      console.log("You want to add a department");
     } else if(answers.mainMenu === "Add a role") {
       addRole();
-      console.log("You want to add a role");
     } else if(answers.mainMenu === "Add an employee") {
       addEmployee();
       console.log("You want to add an employee");
@@ -48,5 +46,28 @@ const init = () => {
       updateEmployeeRole();
       console.log("You want to update an employee role");
     }
+  });
+}
+
+const addDepartment = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "newDepartment",
+      message: "Please enter the name of the department you would like to add:"
+    }
+  ]).then((answers) => {
+    connection.query(
+      "INSERT INTO department SET ?",
+      {
+        department_name: answers.newDepartment
+      },
+      (err) => {
+        if(err) throw err;
+        console.log("Your department was created.");
+        //Bring user back to main questions
+        init();
+      }
+    );
   });
 }
