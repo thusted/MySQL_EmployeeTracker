@@ -161,3 +161,12 @@ const viewAllDepartments = () => {
   })
 }
 
+const viewAllRoles = () => {
+  connection.query("SELECT * FROM role", (err, res) => {
+    if(err) throw err;
+    console.table(res);
+
+    //Bring user back to main questions
+    init();
+  })
+}
