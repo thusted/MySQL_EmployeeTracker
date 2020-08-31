@@ -32,7 +32,6 @@ const init = () => {
       addRole();
     } else if(answers.mainMenu === "Add an employee") {
       addEmployee();
-      console.log("You want to add an employee");
     } else if(answers.mainMenu === "View all departments") {
       viewAllDepartments();
       console.log("You want to view all departments");
@@ -100,6 +99,52 @@ const addRole = () => {
       (err) => {
         if(err) throw err;
         console.log("Your role was created.");
+        //Bring user back to main questions
+        init();
+      }
+    );
+  });
+}
+
+const addEmployee = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "newEmployeeFirstName",
+      message: "What is the first name of your employee?"
+    },
+    {
+      type: "input",
+      name: "newEmployeeLastName",
+      message: "What is the last name of your employee?"
+    },
+    {
+      type: "input",
+      name: "newEmployeeRoleId",
+      message: "What is the role id of your employee?"
+    },
+    {
+      type: "input",
+      name: "newEmployeeManagerId",
+      message: "What is the manager id of your employee? (This field can be left blank if your employee has no manager.)"
+    }
+  ]).then((answers) => {
+    //If user leaves manager id blank, make the value null for the database entry
+    if(answers.newEmployeeManagerId === "") {
+      answers.newEmployeeManagerId = null;
+    };
+
+    connection.query(
+      "INSERT INTO employee SET ?",
+      {
+        first_name: answers.newEmployeeFirstName,
+        last_name: answers.newEmployeeLastName,
+        role_id: answers.newEmployeeRoleId,
+        manager_id: answers.newEmployeeManagerId
+      },
+      (err) => {
+        if(err) throw err;
+        console.log("Your employee was created.");
         //Bring user back to main questions
         init();
       }
