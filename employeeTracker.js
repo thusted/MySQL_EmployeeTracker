@@ -34,7 +34,6 @@ const init = () => {
       addEmployee();
     } else if(answers.mainMenu === "View all departments") {
       viewAllDepartments();
-      console.log("You want to view all departments");
     } else if(answers.mainMenu === "View all roles") {
       viewAllRoles();
       console.log("You want to view all roles");
@@ -150,4 +149,11 @@ const addEmployee = () => {
       }
     );
   });
+}
+
+const viewAllDepartments = () => {
+  connection.query("SELECT * FROM department", (err, res) => {
+    if(err) throw err;
+    console.table(res);
+  })
 }
