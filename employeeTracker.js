@@ -71,3 +71,38 @@ const addDepartment = () => {
     );
   });
 }
+
+const addRole = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "newRoleTitle",
+      message: "Please enter the title of the role you would like to add:"
+    },
+    {
+      type: "input",
+      name: "newRoleSalary",
+      message: "Please enter the salary of the role you would like to add:"
+    },
+    {
+      type: "input",
+      name: "departmentId",
+      message: "Please enter the id of the department this role is under:"
+    }
+  ]).then((answers) => {
+    connection.query(
+      "INSERT INTO role SET ?",
+      {
+        role_title: answers.newRoleTitle,
+        role_salary: answers.newRoleSalary,
+        department_id: answers.departmentId
+      },
+      (err) => {
+        if(err) throw err;
+        console.log("Your role was created.");
+        //Bring user back to main questions
+        init();
+      }
+    );
+  });
+}
