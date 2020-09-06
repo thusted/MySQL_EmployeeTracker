@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "",
+  password: "love_bob1", //Enter password here
   database: "employeeTracker_DB"
 });
 
@@ -23,7 +23,7 @@ const init = () => {
       type: "list",
       name: "mainMenu",
       message: "What would you like to do?",
-      choices: ["Add a department", "Add a role", "Add an employee", "View all departments", "View all roles", "View all employees", "Update an employee role"]
+      choices: ["Add a department", "Add a role", "Add an employee", "View all departments", "View all roles", "View all employees", "Update an employee role", "Update an Employee Manager"]
     }
   ]).then((answers) => {
     if(answers.mainMenu === "Add a department") {
@@ -38,8 +38,10 @@ const init = () => {
       viewAllRoles();
     } else if(answers.mainMenu === "View all employees") {
       viewAllEmployees();
-    } else {
+    } else if (answers.mainMenu === "Update an employee role") {
       updateEmployeeRole();
+    } else {
+      updateEmployeeManager();
     }
   });
 }
@@ -202,6 +204,37 @@ const updateEmployeeRole = () => {
     ], (err) => {
       if(err) throw err;
       console.log("Successfully updated employee role.");
+
+      //Bring user back to main questions
+      init();
+    });
+  });
+}
+
+const updateEmployeeManager = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "employeeId",
+      message: "Please enter the id of the employee who's manager you would like to update:"
+    },
+    {
+      type: "input",
+      name: "updatedManagerId",
+      message: "Please enter the new manager id:"
+    }
+  ]).then((answers) => {
+    connection.query("UPDATE employee SET ? WHERE ?",
+    [
+      {
+        manager_id: answers.updatedManagerId
+      },
+      {
+        id: answers.employeeId
+      }
+    ], (err) => {
+      if(err) throw err;
+      console.log("Successfully updated employee manager.");
 
       //Bring user back to main questions
       init();
