@@ -23,7 +23,7 @@ const init = () => {
       type: "list",
       name: "mainMenu",
       message: "What would you like to do?",
-      choices: ["Add a department", "Add a role", "Add an employee", "View all departments", "View all roles", "View all employees", "Update an employee role", "Update an employee manager", "Delete a department"]
+      choices: ["Add a department", "Add a role", "Add an employee", "View all departments", "View all roles", "View all employees", "Update an employee role", "Update an employee manager", "Delete a department", "Delete a role"]
     }
   ]).then((answers) => {
     if(answers.mainMenu === "Add a department") {
@@ -44,6 +44,8 @@ const init = () => {
       updateEmployeeManager();
     } else if (answers.mainMenu === "Delete a department") {
       deleteDepartment();
+    } else if (answers.mainMenu === "Delete a role") {
+      deleteRole();
     }
   });
 }
@@ -267,3 +269,25 @@ const deleteDepartment = () => {
   });
 }
 
+const deleteRole = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "roleTitle",
+      message: "Please enter the name of the role you would like to delete:"
+    }
+  ]).then((answers) => {
+    connection.query("DELETE FROM role WHERE ?",
+    [
+      {
+        role_title: answers.roleTitle
+      }
+    ], (err, res) => {
+      if(err) throw err;
+      console.log("Successfully deleted role.");
+
+      //Bring user back to main questions
+      init();
+    });
+  });
+}
