@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: "love_bob1",
+  password: "",
   database: "employeeTracker_DB"
 });
 
@@ -36,13 +36,10 @@ const init = () => {
       viewAllDepartments();
     } else if(answers.mainMenu === "View all roles") {
       viewAllRoles();
-      console.log("You want to view all roles");
     } else if(answers.mainMenu === "View all employees") {
       viewAllEmployees();
-      console.log("You want to view all employees");
     } else {
       updateEmployeeRole();
-      console.log("You want to update an employee role");
     }
   });
 }
@@ -170,3 +167,45 @@ const viewAllRoles = () => {
     init();
   })
 }
+
+const viewAllEmployees = () => {
+  connection.query("SELECT * FROM employee", (err, res) => {
+    if(err) throw err;
+    console.table(res);
+
+    //Bring user back to main questions
+    init();
+  })
+}
+
+const updateEmployeeRole = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "employeeId",
+      message: "Please enter the id of the employee who's role you would like to update:"
+    },
+    {
+      type: "input",
+      name: "updatedRoleId",
+      message: "Please enter the new role id:"
+    }
+  ]).then((answers) => {
+    connection.query("UPDATE employee SET ? WHERE ?",
+    [
+      {
+        role_id: answers.updatedRoleId
+      },
+      {
+        id: answers.employeeId
+      }
+    ], (err) => {
+      if(err) throw err;
+      console.log("Successfully updated employee role.");
+
+      //Bring user back to main questions
+      init();
+    });
+  });
+}
+
