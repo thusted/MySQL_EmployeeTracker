@@ -23,7 +23,7 @@ const init = () => {
       type: "list",
       name: "mainMenu",
       message: "What would you like to do?",
-      choices: ["Add a department", "Add a role", "Add an employee", "View all departments", "View all roles", "View all employees", "Update an employee role", "Update an employee manager", "Delete a department", "Delete a role"]
+      choices: ["Add a department", "Add a role", "Add an employee", "View all departments", "View all roles", "View all employees", "Update an employee role", "Update an employee manager", "Delete a department", "Delete a role", "Delete an employee"]
     }
   ]).then((answers) => {
     if(answers.mainMenu === "Add a department") {
@@ -46,6 +46,8 @@ const init = () => {
       deleteDepartment();
     } else if (answers.mainMenu === "Delete a role") {
       deleteRole();
+    } else {
+      deleteEmployee();
     }
   });
 }
@@ -285,6 +287,29 @@ const deleteRole = () => {
     ], (err, res) => {
       if(err) throw err;
       console.log("Successfully deleted role.");
+
+      //Bring user back to main questions
+      init();
+    });
+  });
+}
+
+const deleteEmployee = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "employeeId",
+      message: "Please enter the id of the employee you would like to delete:"
+    }
+  ]).then((answers) => {
+    connection.query("DELETE FROM employee WHERE ?",
+    [
+      {
+        id: answers.employeeId
+      }
+    ], (err, res) => {
+      if(err) throw err;
+      console.log("Successfully deleted employee.");
 
       //Bring user back to main questions
       init();
